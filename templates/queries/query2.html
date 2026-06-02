@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Пошук обладнання за вартістю</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT e.*, l.name FROM equipment e 
+JOIN laboratories l ON e.laboratory_id = l.id 
+WHERE e.cost > :min_cost</pre>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Мінімальна вартість:</label>
+        <input type="number" name="min_cost" step="0.01" required placeholder="Наприклад: 10000">
+    </div>
+    <div class="button-group">
+        <button type="submit" class="btn">Пошук</button>
+        <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Тип</th>
+            <th>Вартість</th>
+            <th>Дата придбання</th>
+            <th>Лабораторія</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for equipment, laboratory in results %}
+        <tr>
+            <td>{{ equipment.name }}</td>
+            <td>{{ equipment.equipment_type }}</td>
+            <td>{{ "%.2f"|format(equipment.cost) }} грн</td>
+            <td>{{ equipment.purchase_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ laboratory.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif request.method == 'POST' %}
+<div class="alert alert-error">
+    <p>Результатів не знайдено</p>
+</div>
+{% endif %}
+{% endblock %}

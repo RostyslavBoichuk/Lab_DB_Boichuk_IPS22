@@ -1,0 +1,190 @@
+PROJECT STRUCTURE - Система управління базою даних експедицій
+================================================================
+
+📁 expeditions_db/
+│
+├── 📄 app.py (480 lines)
+│   └─ Головна Flask程式з маршрутами (routes):
+│      • Index / Menu - головна сторінка
+│      • Directors - управління директорами (CRUD)
+│      • Organizations - управління організаціями (CRUD)
+│      • Laboratories - управління лабораторіями (CRUD)
+│      • Expeditions - управління експедиціями (CRUD)
+│      • Roles - управління ролями (CRUD)
+│      • Researchers - управління дослідниками (CRUD)
+│      • Equipment - управління обладнанням (CRUD)
+│      • Contracts - управління контрактами (CRUD)
+│      • Queries (8) - параметризовані запити
+│      • Reports (4) - аналітичні звіти
+│      • Error handlers - обробка помилок (404, 500)
+│
+├── 📄 models.py (190 lines)
+│   └─ SQLAlchemy ORM моделі:
+│      • Director
+│      • Organization
+│      • Laboratory
+│      • Expedition
+│      • Role
+│      • Researcher (з self-reference для керівництва)
+│      • Equipment
+│      • Contract
+│      • expedition_researchers (Many-to-Many)
+│
+├── 📄 forms.py (125 lines)
+│   └─ WTForms для введення даних:
+│      • DirectorForm
+│      • OrganizationForm
+│      • LaboratoryForm
+│      • ExpeditionForm
+│      • RoleForm
+│      • ResearcherForm
+│      • EquipmentForm
+│      • ContractForm
+│
+├── 📄 queries.py (320 lines)
+│   └─ Параметризовані запити та звіти:
+│      ► Прості запити (5):
+│        1. query_researchers_by_specialization
+│        2. query_equipment_cost_above
+│        3. query_expeditions_by_region_and_date
+│        4. query_contracts_by_budget_and_date
+│        5. query_laboratories_by_employee_count
+│      ► Запити з множинними порівняннями (3):
+│        6. query_researchers_same_specialization_as
+│        7. query_researchers_all_expeditions
+│        8. query_researchers_same_laboratory
+│      ► Звіти (4):
+│        1. get_report_expeditions_with_researchers
+│        2. get_report_lab_statistics
+│        3. get_report_researcher_contracts
+│        4. get_report_organization_overview
+│
+├── 📄 config.py (15 lines)
+│   └─ Конфігурація Flask додатка
+│      • Database URI (SQLite)
+│      • Secret key
+│      • Session lifetime
+│
+├── 📄 run.py (25 lines)
+│   └─ Точка входу для запуску додатка
+│
+├── 📄 requirements.txt
+│   └─ Python залежності:
+│      • Flask==2.3.0
+│      • Flask-SQLAlchemy==3.0.5
+│      • SQLAlchemy==2.0.0
+│      • WTForms==3.0.1
+│      • Flask-WTF==1.1.1
+│      • Jinja2==3.1.2
+│      • pyodbc==4.0.35
+│      • pandas==2.0.0
+│
+├── 📄 expeditions.db (автоматично створюється)
+│   └─ SQLite база даних з 8 таблицями
+│
+├── 📁 templates/ (30 HTML файлів)
+│   ├── 📄 base.html - базовий шаблон з CSS стилями
+│   ├── 📄 index.html - головна сторінка-меню
+│   ├── 📄 404.html - сторінка помилки 404
+│   ├── 📄 500.html - сторінка помилки 500
+│   ├── 📄 form_template.html - шаблон для форм
+│   │
+│   ├── 📁 directors/
+│   │   ├── list.html - список директорів
+│   │   └── form.html - форма директора
+│   │
+│   ├── 📁 organizations/
+│   │   ├── list.html - список організацій
+│   │   └── form.html - форма організації
+│   │
+│   ├── 📁 laboratories/
+│   │   ├── list.html - список лабораторій
+│   │   └── form.html - форма лабораторії
+│   │
+│   ├── 📁 expeditions/
+│   │   ├── list.html - список експедицій
+│   │   └── form.html - форма експедиції
+│   │
+│   ├── 📁 roles/
+│   │   ├── list.html - список ролей
+│   │   └── form.html - форма ролі
+│   │
+│   ├── 📁 researchers/
+│   │   ├── list.html - список дослідників
+│   │   └── form.html - форма дослідника
+│   │
+│   ├── 📁 equipment/
+│   │   ├── list.html - список обладнання
+│   │   └── form.html - форма обладнання
+│   │
+│   ├── 📁 contracts/
+│   │   ├── list.html - список контрактів
+│   │   └── form.html - форма контракту
+│   │
+│   ├── 📁 queries/
+│   │   ├── menu.html - меню запитів
+│   │   ├── query1.html - запит 1
+│   │   ├── query2.html - запит 2
+│   │   ├── query3.html - запит 3
+│   │   ├── query4.html - запит 4
+│   │   ├── query5.html - запит 5
+│   │   ├── query6.html - запит 6
+│   │   ├── query7.html - запит 7
+│   │   └── query8.html - запит 8
+│   │
+│   └── 📁 reports/
+│       ├── menu.html - меню звітів
+│       ├── report1.html - звіт 1
+│       ├── report2.html - звіт 2
+│       ├── report3.html - звіт 3
+│       └── report4.html - звіт 4
+│
+├── 📄 README.md (400+ lines)
+│   └─ Повна документація проекту:
+│      • Інструкції встановлення
+│      • ER-модель з описом таблиць
+│      • Функціональність
+│      • Опис всіх 8 запитів
+│      • Опис всіх 4 звітів
+│      • Технологічний стек
+│
+├── 📄 QUICKSTART.md (100 lines)
+│   └─ Швидкий старт:
+│      • Простий старт за 3 кроки
+│      • Огляд функцій
+│      • Структура проекту
+│
+├── 📄 LAB_REPORT.txt (400+ lines)
+│   └─ Офіційний звіт для подачі:
+│      • Текстовий опис предметної області
+│      • ER-діаграма у текстовому форматі
+│      • Опис форм з їх елементами
+│      • Повні SQL та Python коди всіх 8 запитів
+│      • Опис всіх 4 звітів з виразами
+│
+└── 📄 .gitignore
+    └─ Игнорування файлів для Git
+
+════════════════════════════════════════════════════════════════════════════════
+
+СТАТИСТИКА ПРОЕКТУ:
+═══════════════════
+
+Файлів Python: 5
+Файлів HTML: 30
+Файлів документації: 3
+Загального коду: 1500+ рядків
+Таблиць БД: 8
+Запитів: 8 (5 простих + 3 складні)
+Звітів: 4
+Форм для введення: 8
+
+════════════════════════════════════════════════════════════════════════════════
+
+ВСТАНОВЛЕННЯ ЗАЙМАЄ 2 ХВИЛИНИ:
+
+1. pip install -r requirements.txt
+2. python run.py
+3. Відкрити http://localhost:5000 у браузері
+
+════════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Контракти</h1>
+
+<div style="margin-bottom: 2rem;">
+    <a href="{{ url_for('add_contract') }}" class="btn">+ Додати контракт</a>
+</div>
+
+{% if contracts %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Дослідник</th>
+            <th>Організація</th>
+            <th>Період</th>
+            <th>Бюджет</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contract in contracts %}
+        <tr>
+            <td>{{ contract.id }}</td>
+            <td>{{ contract.title }}</td>
+            <td>{{ contract.researcher.full_name if contract.researcher else 'N/A' }}</td>
+            <td>{{ contract.organization.name if contract.organization else 'N/A' }}</td>
+            <td>{{ contract.start_date.strftime('%d.%m.%Y') }} - {{ contract.end_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ "%.2f"|format(contract.budget) }} грн</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('edit_contract', id=contract.id) }}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Редагувати</a>
+                <form method="POST" action="{{ url_for('delete_contract', id=contract.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає контрактів у базі даних</p>
+</div>
+{% endif %}
+{% endblock %}

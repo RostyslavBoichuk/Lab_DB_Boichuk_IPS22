@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('reports_menu') }}" class="btn btn-secondary">← Назад до звітів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Звіт про експедиції та кількість дослідників у кожній експедиції з розрахунком середнього стажу</p>
+    <p><strong>Вираз для обчислення:</strong> Середній стаж = YEAR(start_date) - YEAR(hire_date)</p>
+</div>
+
+{% if results %}
+<table>
+    <thead>
+        <tr>
+            <th>Назва експедиції</th>
+            <th>Регіон</th>
+            <th>Дати проведення</th>
+            <th>Кількість дослідників</th>
+            <th>Середній стаж (років)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expedition, researcher_count, avg_experience in results %}
+        <tr>
+            <td>{{ expedition.name }}</td>
+            <td>{{ expedition.region }}</td>
+            <td>{{ expedition.start_date.strftime('%d.%m.%Y') }} - {{ expedition.end_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ researcher_count or 0 }}</td>
+            <td>{{ "%.1f"|format(avg_experience) if avg_experience else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає даних для звіту</p>
+</div>
+{% endif %}
+{% endblock %}

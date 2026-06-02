@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Пошук лабораторій за кількістю співробітників</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT l.*, o.name FROM laboratories l
+JOIN organizations o ON l.organization_id = o.id
+WHERE l.num_employees BETWEEN :min AND :max</pre>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Мінімальна кількість:</label>
+        <input type="number" name="min_employees" required placeholder="Наприклад: 5" min="0">
+    </div>
+    <div class="form-group">
+        <label>Максимальна кількість:</label>
+        <input type="number" name="max_employees" required placeholder="Наприклад: 50" min="0">
+    </div>
+    <div class="button-group">
+        <button type="submit" class="btn">Пошук</button>
+        <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Назва лабораторії</th>
+            <th>Кількість співробітників</th>
+            <th>Напрями діяльності</th>
+            <th>Організація</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for laboratory, organization in results %}
+        <tr>
+            <td>{{ laboratory.name }}</td>
+            <td>{{ laboratory.num_employees }}</td>
+            <td>{{ laboratory.activities or 'N/A' }}</td>
+            <td>{{ organization.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif request.method == 'POST' %}
+<div class="alert alert-error">
+    <p>Результатів не знайдено</p>
+</div>
+{% endif %}
+{% endblock %}

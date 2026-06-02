@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div class="form-group">
+    {{ form.hidden_tag() }}
+    {% if form.id %}
+    <div>
+        <label>{{ form.id.label }}</label>
+        {{ form.id(size=50) }}
+        {% if form.id.errors %}
+        <span style="color: #e74c3c;">{{ form.id.errors[0] }}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    
+    {% for field in form if field.name != 'csrf_token' and field.name != 'submit' and field.name != 'id' %}
+    <div class="form-group">
+        <label>{{ field.label }}</label>
+        {% if field.type == 'TextAreaField' %}
+            {{ field(rows=4) }}
+        {% else %}
+            {{ field() }}
+        {% endif %}
+        {% if field.errors %}
+        <span style="color: #e74c3c;">{{ field.errors[0] }}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <div class="button-group">
+        {{ form.submit(class="btn") }}
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Скасувати</a>
+    </div>
+</form>
+{% endblock %}

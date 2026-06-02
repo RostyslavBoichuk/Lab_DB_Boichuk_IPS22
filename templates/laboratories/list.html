@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Лабораторії</h1>
+
+<div style="margin-bottom: 2rem;">
+    <a href="{{ url_for('add_laboratory') }}" class="btn">+ Додати лабораторію</a>
+</div>
+
+{% if laboratories %}
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Організація</th>
+            <th>Кількість співробітників</th>
+            <th>Напрями діяльності</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lab in laboratories %}
+        <tr>
+            <td>{{ lab.name }}</td>
+            <td>{{ lab.organization.name if lab.organization else 'N/A' }}</td>
+            <td>{{ lab.num_employees }}</td>
+            <td>{{ lab.activities or 'N/A' }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('edit_laboratory', id=lab.id) }}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Редагувати</a>
+                <form method="POST" action="{{ url_for('delete_laboratory', id=lab.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає лабораторій у базі даних</p>
+</div>
+{% endif %}
+{% endblock %}

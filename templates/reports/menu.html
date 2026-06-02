@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Звіти</h1>
+
+<div class="menu-grid">
+    <a href="{{ url_for('report1') }}" class="menu-card">
+        <h3>Звіт 1</h3>
+        <p>Експедиції та кількість дослідників</p>
+    </a>
+    
+    <a href="{{ url_for('report2') }}" class="menu-card">
+        <h3>Звіт 2</h3>
+        <p>Статистика лабораторій</p>
+    </a>
+    
+    <a href="{{ url_for('report3') }}" class="menu-card">
+        <h3>Звіт 3</h3>
+        <p>Контракти дослідників</p>
+    </a>
+    
+    <a href="{{ url_for('report4') }}" class="menu-card">
+        <h3>Звіт 4</h3>
+        <p>Огляд організацій</p>
+    </a>
+</div>
+{% endblock %}

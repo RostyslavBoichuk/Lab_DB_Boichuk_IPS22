@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Запити</h1>
+
+<div class="menu-grid">
+    <a href="{{ url_for('query1') }}" class="menu-card">
+        <h3>Запит 1</h3>
+        <p>Дослідники за спеціалізацією</p>
+    </a>
+    
+    <a href="{{ url_for('query2') }}" class="menu-card">
+        <h3>Запит 2</h3>
+        <p>Обладнання вартістю вище від заданої</p>
+    </a>
+    
+    <a href="{{ url_for('query3') }}" class="menu-card">
+        <h3>Запит 3</h3>
+        <p>Експедиції у регіоні починаючи з року</p>
+    </a>
+    
+    <a href="{{ url_for('query4') }}" class="menu-card">
+        <h3>Запит 4</h3>
+        <p>Контракти з бюджетом та років дії</p>
+    </a>
+    
+    <a href="{{ url_for('query5') }}" class="menu-card">
+        <h3>Запит 5</h3>
+        <p>Лабораторії за кількістю співробітників</p>
+    </a>
+    
+    <a href="{{ url_for('query6') }}" class="menu-card">
+        <h3>Запит 6</h3>
+        <p>Дослідники з однаковою спеціалізацією</p>
+    </a>
+    
+    <a href="{{ url_for('query7') }}" class="menu-card">
+        <h3>Запит 7</h3>
+        <p>Дослідники у всіх експедиціях</p>
+    </a>
+    
+    <a href="{{ url_for('query8') }}" class="menu-card">
+        <h3>Запит 8</h3>
+        <p>Колеги в одній лабораторії</p>
+    </a>
+</div>
+{% endblock %}

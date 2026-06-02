@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Пошук експедицій у регіоні за роками</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT e.* FROM expeditions e 
+WHERE e.region = :region AND YEAR(e.start_date) >= :start_year</pre>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Регіон:</label>
+        <input type="text" name="region" required placeholder="Наприклад: Світовий океан">
+    </div>
+    <div class="form-group">
+        <label>Стартовий рік:</label>
+        <input type="number" name="start_year" required placeholder="Наприклад: 2020" min="1900" max="2100">
+    </div>
+    <div class="button-group">
+        <button type="submit" class="btn">Пошук</button>
+        <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Регіон</th>
+            <th>Дата початку</th>
+            <th>Дата закінчення</th>
+            <th>Директор</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expedition in results %}
+        <tr>
+            <td>{{ expedition.id }}</td>
+            <td>{{ expedition.name }}</td>
+            <td>{{ expedition.region }}</td>
+            <td>{{ expedition.start_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ expedition.end_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ expedition.director.full_name if expedition.director else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif request.method == 'POST' %}
+<div class="alert alert-error">
+    <p>Результатів не знайдено</p>
+</div>
+{% endif %}
+{% endblock %}

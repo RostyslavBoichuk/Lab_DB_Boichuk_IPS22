@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Колеги в одній лабораторії з однаковою спеціалізацією</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT r.* FROM researchers r, researchers r_target
+WHERE r.laboratory_id = r_target.laboratory_id
+AND r.specialization = r_target.specialization
+AND r.id != r_target.id</pre>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Оберіть дослідника:</label>
+        <select name="researcher_id" required>
+            <option value="">-- Оберіть --</option>
+            {% for researcher_id, researcher_name in researchers %}
+            <option value="{{ researcher_id }}">{{ researcher_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="button-group">
+        <button type="submit" class="btn">Пошук</button>
+        <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Повне імя</th>
+            <th>Спеціалізація</th>
+            <th>Дата прийняття</th>
+            <th>Роль</th>
+            <th>Лабораторія</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for researcher in results %}
+        <tr>
+            <td>{{ researcher.id }}</td>
+            <td>{{ researcher.full_name }}</td>
+            <td>{{ researcher.specialization or 'N/A' }}</td>
+            <td>{{ researcher.hire_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ researcher.role.name if researcher.role else 'N/A' }}</td>
+            <td>{{ researcher.laboratory.name if researcher.laboratory else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif request.method == 'POST' %}
+<div class="alert alert-error">
+    <p>Результатів не знайдено</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% macro get_researchers() %}
+    {% for r_id, r_name in [] %}
+        <option value="{{ r_id }}">{{ r_name }}</option>
+    {% endfor %}
+{% endmacro %}

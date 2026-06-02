@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('reports_menu') }}" class="btn btn-secondary">← Назад до звітів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Статистика лабораторій з кількістю обладнання, загальною вартістю та кількістю дослідників</p>
+    <p><strong>Вирази для обчислення:</strong> SUM(cost) - сумарна вартість обладнання, COUNT(equipment) - кількість одиниць</p>
+</div>
+
+{% if results %}
+<table>
+    <thead>
+        <tr>
+            <th>Назва лабораторії</th>
+            <th>Організація</th>
+            <th>Кількість обладнання</th>
+            <th>Загальна вартість обладнання</th>
+            <th>Кількість дослідників</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for laboratory, organization, equipment_count, total_cost, researcher_count in results %}
+        <tr>
+            <td>{{ laboratory.name }}</td>
+            <td>{{ organization.name }}</td>
+            <td>{{ equipment_count or 0 }}</td>
+            <td>{{ "%.2f"|format(total_cost) if total_cost else '0.00' }} грн</td>
+            <td>{{ researcher_count or 0 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає даних для звіту</p>
+</div>
+{% endif %}
+{% endblock %}

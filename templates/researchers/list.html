@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Дослідники</h1>
+
+<div style="margin-bottom: 2rem;">
+    <a href="{{ url_for('add_researcher') }}" class="btn">+ Додати дослідника</a>
+</div>
+
+{% if researchers %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Повне імя</th>
+            <th>Спеціалізація</th>
+            <th>Лабораторія</th>
+            <th>Роль</th>
+            <th>Дата прийняття</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for researcher in researchers %}
+        <tr>
+            <td>{{ researcher.id }}</td>
+            <td>{{ researcher.full_name }}</td>
+            <td>{{ researcher.specialization or 'N/A' }}</td>
+            <td>{{ researcher.laboratory.name if researcher.laboratory else 'N/A' }}</td>
+            <td>{{ researcher.role.name if researcher.role else 'N/A' }}</td>
+            <td>{{ researcher.hire_date.strftime('%d.%m.%Y') }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('edit_researcher', id=researcher.id) }}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Редагувати</a>
+                <form method="POST" action="{{ url_for('delete_researcher', id=researcher.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає дослідників у базі даних</p>
+</div>
+{% endif %}
+{% endblock %}

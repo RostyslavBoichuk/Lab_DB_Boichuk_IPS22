@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('reports_menu') }}" class="btn btn-secondary">← Назад до звітів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Звіт про контракти дослідників з розрахунком тривалості та бюджету на день</p>
+    <p><strong>Вирази для обчислення:</strong></p>
+    <ul>
+        <li>Тривалість = DATEDIFF(end_date, start_date)</li>
+        <li>Бюджет на день = budget / DATEDIFF(end_date, start_date)</li>
+    </ul>
+</div>
+
+{% if results %}
+<table>
+    <thead>
+        <tr>
+            <th>Дослідник</th>
+            <th>Роль</th>
+            <th>Контракт</th>
+            <th>Період</th>
+            <th>Тривалість (днів)</th>
+            <th>Бюджет</th>
+            <th>Бюджет на день</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for researcher, role, contract, duration_days, budget_per_day in results %}
+        <tr>
+            <td>{{ researcher.full_name }}</td>
+            <td>{{ role.name }}</td>
+            <td>{{ contract.title }}</td>
+            <td>{{ contract.start_date.strftime('%d.%m.%Y') }} - {{ contract.end_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ duration_days or 'N/A' }}</td>
+            <td>{{ "%.2f"|format(contract.budget) }} грн</td>
+            <td>{{ "%.2f"|format(budget_per_day) if budget_per_day else 'N/A' }} грн</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає даних для звіту</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Дослідники, які беруть участь у ВСІХ експедиціях (Запит з множинними порівняннями)</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT r.* FROM researchers r
+WHERE NOT EXISTS (
+    SELECT 1 FROM expeditions e
+    WHERE NOT EXISTS (
+        SELECT 1 FROM expedition_researchers er
+        WHERE er.expedition_id = e.id AND er.researcher_id = r.id
+    )
+)</pre>
+</div>
+
+<div class="button-group">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+</div>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Повне імя</th>
+            <th>Спеціалізація</th>
+            <th>Дата прийняття</th>
+            <th>Роль</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for researcher in results %}
+        <tr>
+            <td>{{ researcher.id }}</td>
+            <td>{{ researcher.full_name }}</td>
+            <td>{{ researcher.specialization or 'N/A' }}</td>
+            <td>{{ researcher.hire_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ researcher.role.name if researcher.role else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="margin-top: 2rem;" class="alert alert-error">
+    <p>Немає дослідників, що беруть участь у всіх експедиціях</p>
+</div>
+{% endif %}
+{% endblock %}

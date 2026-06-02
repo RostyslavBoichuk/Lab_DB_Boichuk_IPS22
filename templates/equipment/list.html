@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Повернутися до меню</a>
+</div>
+
+<h1 class="page-title">Обладнання</h1>
+
+<div style="margin-bottom: 2rem;">
+    <a href="{{ url_for('add_equipment') }}" class="btn">+ Додати обладнання</a>
+</div>
+
+{% if equipment %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Тип</th>
+            <th>Вартість</th>
+            <th>Дата придбання</th>
+            <th>Лабораторія</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in equipment %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.equipment_type }}</td>
+            <td>{{ "%.2f"|format(item.cost) }} грн</td>
+            <td>{{ item.purchase_date.strftime('%d.%m.%Y') }}</td>
+            <td>{{ item.laboratory.name if item.laboratory else 'N/A' }}</td>
+            <td class="action-buttons">
+                <a href="{{ url_for('edit_equipment', id=item.id) }}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Редагувати</a>
+                <form method="POST" action="{{ url_for('delete_equipment', id=item.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає обладнання у базі даних</p>
+</div>
+{% endif %}
+{% endblock %}

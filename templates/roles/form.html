@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('list_roles') }}" class="btn btn-secondary">← Назад до списку</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+{% if edit and (prev_id or next_id) %}
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center;">
+    {% if prev_id %}
+        <a href="{{ url_for('edit_role', id=prev_id) }}" class="btn btn-info">◀ Попередній</a>
+    {% else %}
+        <button class="btn" disabled>◀ Попередній</button>
+    {% endif %}
+    {% if next_id %}
+        <a href="{{ url_for('edit_role', id=next_id) }}" class="btn btn-info">Наступний ▶</a>
+    {% else %}
+        <button class="btn" disabled>Наступний ▶</button>
+    {% endif %}
+</div>
+{% endif %}
+
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    
+    {% for field in form if field.name != 'csrf_token' and field.name != 'submit' %}
+    <div class="form-group">
+        <label>{{ field.label }}</label>
+        {% if field.type == 'TextAreaField' %}
+            {{ field(rows=4) }}
+        {% else %}
+            {{ field() }}
+        {% endif %}
+        {% if field.errors %}
+        <span style="color: #e74c3c;">{{ field.errors[0] }}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <div class="button-group">
+        {{ form.submit(class="btn") }}
+        <a href="{{ url_for('list_roles') }}" class="btn btn-secondary">Скасувати</a>
+    </div>
+</form>
+{% endblock %}

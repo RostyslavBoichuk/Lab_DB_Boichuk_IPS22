@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('reports_menu') }}" class="btn btn-secondary">← Назад до звітів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Огляд організацій з розрахунком кількості лабораторій, експедицій та загального бюджету</p>
+    <p><strong>Вирази для обчислення:</strong></p>
+    <ul>
+        <li>Кількість лабораторій = COUNT(DISTINCT laboratory_id)</li>
+        <li>Кількість експедицій = COUNT(DISTINCT expedition_id)</li>
+        <li>Загальний бюджет = SUM(contract.budget)</li>
+    </ul>
+</div>
+
+{% if results %}
+<table>
+    <thead>
+        <tr>
+            <th>Організація</th>
+            <th>Директор</th>
+            <th>Країна</th>
+            <th>Кількість лабораторій</th>
+            <th>Кількість експедицій</th>
+            <th>Загальний бюджет</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for organization, director, lab_count, expedition_count, total_budget in results %}
+        <tr>
+            <td>{{ organization.name }}</td>
+            <td>{{ director.full_name }}</td>
+            <td>{{ organization.country }}</td>
+            <td>{{ lab_count or 0 }}</td>
+            <td>{{ expedition_count or 0 }}</td>
+            <td>{{ "%.2f"|format(total_budget) if total_budget else '0.00' }} грн</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="no-data">
+    <p>Немає даних для звіту</p>
+</div>
+{% endif %}
+{% endblock %}

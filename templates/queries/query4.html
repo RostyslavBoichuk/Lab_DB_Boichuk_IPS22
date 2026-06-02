@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="back-button">
+    <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">← Назад до запитів</a>
+</div>
+
+<h1 class="page-title">{{ title }}</h1>
+
+<div style="background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+    <p><strong>Опис:</strong> Пошук контрактів за бюджетом та роком закінчення</p>
+    <p><strong>SQL запит:</strong></p>
+    <pre style="background: white; padding: 1rem; border-radius: 4px; overflow-x: auto;">SELECT c.*, r.full_name, o.name FROM contracts c
+JOIN researchers r ON c.researcher_id = r.id
+JOIN organizations o ON c.organization_id = o.id
+WHERE c.budget > :min_budget AND YEAR(c.end_date) = :end_year</pre>
+</div>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Мінімальний бюджет:</label>
+        <input type="number" name="min_budget" step="0.01" required placeholder="Наприклад: 50000">
+    </div>
+    <div class="form-group">
+        <label>Рік закінчення:</label>
+        <input type="number" name="end_year" required placeholder="Наприклад: 2024" min="1900" max="2100">
+    </div>
+    <div class="button-group">
+        <button type="submit" class="btn">Пошук</button>
+        <a href="{{ url_for('queries_menu') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+
+{% if results %}
+<h2 style="margin-top: 2rem;">Результати (знайдено: {{ results|length }})</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID Контракту</th>
+            <th>Назва</th>
+            <th>Дослідник</th>
+            <th>Організація</th>
+            <th>Бюджет</th>
+            <th>Дата закінчення</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contract, researcher, organization in results %}
+        <tr>
+            <td>{{ contract.id }}</td>
+            <td>{{ contract.title }}</td>
+            <td>{{ researcher.full_name }}</td>
+            <td>{{ organization.name }}</td>
+            <td>{{ "%.2f"|format(contract.budget) }} грн</td>
+            <td>{{ contract.end_date.strftime('%d.%m.%Y') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% elif request.method == 'POST' %}
+<div class="alert alert-error">
+    <p>Результатів не знайдено</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Головна сторінка - Система управління БД{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Виберіть розділ</h1>
+
+<div class="menu-grid">
+    <!-- Управління даними -->
+    <a href="{{ url_for('list_directors') }}" class="menu-card">
+        <h3>👤 Директори</h3>
+        <p>Управління директорами та керівниками</p>
+    </a>
+    
+    <a href="{{ url_for('list_organizations') }}" class="menu-card">
+        <h3>🏢 Організації</h3>
+        <p>Управління організаціями та установами</p>
+    </a>
+    
+    <a href="{{ url_for('list_laboratories') }}" class="menu-card">
+        <h3>🔬 Лабораторії</h3>
+        <p>Управління лабораторіями</p>
+    </a>
+    
+    <a href="{{ url_for('list_expeditions') }}" class="menu-card">
+        <h3>🗺️ Експедиції</h3>
+        <p>Управління експедиціями</p>
+    </a>
+    
+    <a href="{{ url_for('list_roles') }}" class="menu-card">
+        <h3>📋 Ролі</h3>
+        <p>Управління ролями та посадами</p>
+    </a>
+    
+    <a href="{{ url_for('list_researchers') }}" class="menu-card">
+        <h3>👨‍🔬 Дослідники</h3>
+        <p>Управління дослідниками</p>
+    </a>
+    
+    <a href="{{ url_for('list_equipment') }}" class="menu-card">
+        <h3>⚙️ Обладнання</h3>
+        <p>Управління обладнанням</p>
+    </a>
+    
+    <a href="{{ url_for('list_contracts') }}" class="menu-card">
+        <h3>📄 Контракти</h3>
+        <p>Управління контрактами та угодами</p>
+    </a>
+    
+    <!-- Запити та звіти -->
+    <a href="{{ url_for('queries_menu') }}" class="menu-card">
+        <h3>🔍 Запити</h3>
+        <p>Виконання параметризованих запитів</p>
+    </a>
+    
+    <a href="{{ url_for('reports_menu') }}" class="menu-card">
+        <h3>📊 Звіти</h3>
+        <p>Перегляд звітів та статистики</p>
+    </a>
+</div>
+
+
+{% endblock %}
