@@ -150,28 +150,26 @@ print("✅ Database seeded successfully!")
 ВАЖЛИВО:
 ================================================================================
 
-⚠️ Всі первинні ключі автоматично генеруються:
+Всі первинні ключі автоматично генеруються:
 - Director.id → AUTO_INCREMENT
 - Laboratory.id → AUTO_INCREMENT
 - Role.id → AUTO_INCREMENT
 - Equipment.id → AUTO_INCREMENT
 
-⚠️ Строкові первинні ключі мають бути унікальні:
+Строкові первинні ключі мають бути унікальні:
 - Organization.id = 'ORG001' → Унікальна
 - Expedition.id = 'EXP001' → Унікальна
 - Researcher.id = 'RES001' → Унікальна
 - Contract.id = 'CNT001' → Унікальна
 
-⚠️ Іноземні ключи повинні посилатися на існуючі записи:
+Іноземні ключи повинні посилатися на існуючі записи:
 - Organization.director_id → ПОВИННА існувати Director з цим id
 - Laboratory.organization_id → ПОВИННА існувати Organization з цим id
 - Expedition.director_id → ПОВИННА існувати Director з цим id
 
 ================================================================================
 """
-Seed Database with Test Data
-This script populates the database with test data for demonstration
-"""
+
 from app import app, db
 from models import Director, Organization, Laboratory, Expedition, Role, Researcher, Equipment, Contract, expedition_researchers, finances, expedition_equipment, researcher_equipment
 from datetime import datetime, date
@@ -183,9 +181,10 @@ def seed_database():
         db.drop_all()
         db.create_all()
         
-        print("🌱 Seeding database with test data...")
+        print("Seeding database with test data...")
         
         # =====================================================================
+
         # CREATE DIRECTORS (Директори)
         # =====================================================================
         print("Creating Directors...")
@@ -546,7 +545,7 @@ def seed_database():
         # COMMIT ALL DATA
         # =====================================================================
         db.session.commit()
-        print("✅ Database seeded successfully with test data!")
+        print("Database seeded successfully with test data!")
         print(f"   • {len(directors)} Directors")
         print(f"   • {len(organizations)} Organizations")
         print(f"   • {len(laboratories)} Laboratories")

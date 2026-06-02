@@ -67,7 +67,7 @@
    
    SECRET_KEY = 'dev-secret-key-change-in-production'
    
-   ⚠️ НЕБЕЗПЕЧНО для production!
+   НЕБЕЗПЕЧНО для production!
 
 2. Генерувати новий безпечний ключ:
    
