@@ -864,15 +864,12 @@ def query5():
                          title='Запит 5: Лабораторії за кількістю')
 
 
-@app.route('/queries/6', methods=['GET', 'POST'])
+@app.route('/queries/6')
 def query6():
-    """Запит 6: Дослідники з однаковою спеціалізацією"""
-    results = []
-    if request.method == 'POST':
-        spec = request.form.get('specialization')
-        results = query_researchers_same_specialization_as(spec)
+    """Запит 6: Дослідники з контрактами У ВСІХ організаціях"""
+    results = query_researchers_contracts_with_all_organizations()
     return render_template('queries/query6.html', results=results,
-                         title='Запит 6: Дослідники з однаковою спеціалізацією')
+                         title='Запит 6: Дослідники з контрактами У ВСІХ організаціях')
 
 
 @app.route('/queries/7')
@@ -883,18 +880,12 @@ def query7():
                          title='Запит 7: Дослідники у всіх експедиціях')
 
 
-@app.route('/queries/8', methods=['GET', 'POST'])
+@app.route('/queries/8')
 def query8():
-    """Запит 8: Колеги в одній лабораторії"""
-    results = []
-    if request.method == 'POST':
-        researcher_id = request.form.get('researcher_id')
-        results = query_researchers_same_laboratory(researcher_id)
-    
-    researchers = get_researchers()
+    """Запит 8: Експедиції з дослідниками ВСІХ спеціалізацій"""
+    results = query_expeditions_with_all_specializations()
     return render_template('queries/query8.html', results=results,
-                         researchers=researchers,
-                         title='Запит 8: Колеги в одній лабораторії')
+                         title='Запит 8: Експедиції з дослідниками ВСІХ спеціалізацій')
 
 
 # ============================================================================

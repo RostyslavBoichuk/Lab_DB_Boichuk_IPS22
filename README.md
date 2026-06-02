@@ -251,17 +251,20 @@ WHERE l.num_employees BETWEEN :min AND :max
 - **Параметри:** Мінімальна та максимальна кількість
 - **Результат:** Лабораторії у вказаному діапазоні персоналу
 
-### Запити з множинними порівняннями (2+ шт.)
+### Запити з множинними порівняннями (УСІ / ЛИШЕ)
 
-#### **Запит 6: Дослідники з однаковою спеціалізацією**
+#### **Запит 6: Дослідники з контрактами У ВСІХ організаціях**
 ```sql
-SELECT r1.* FROM researchers r1
-WHERE r1.specialization IN (
-    SELECT r2.specialization FROM researchers r2 
-    WHERE r2.specialization = :specialization
+SELECT r.* FROM researchers r
+WHERE NOT EXISTS (
+    SELECT 1 FROM organizations o
+    WHERE NOT EXISTS (
+        SELECT 1 FROM contracts c
+        WHERE c.researcher_id = r.id AND c.organization_id = o.id
+    )
 )
 ```
-- **Результат:** Всі дослідники з однаковою спеціалізацією
+- **Результат:** Дослідники, які мають контракти з КОЖНОЮ організацією системи
 
 #### **Запит 7: Дослідники у всіх експедиціях**
 ```sql
@@ -274,16 +277,21 @@ WHERE NOT EXISTS (
     )
 )
 ```
-- **Результат:** Дослідники, що беруть участь у всіх експедиціях
+- **Результат:** Дослідники, що беруть участь У ВСІХ експедиціях
 
-#### **Запит 8: Колеги в одній лабораторії**
+#### **Запит 8: Експедиції з дослідниками ВСІХ спеціалізацій**
 ```sql
-SELECT r.* FROM researchers r, researchers r_target
-WHERE r.laboratory_id = r_target.laboratory_id
-AND r.specialization = r_target.specialization
-AND r.id != r_target.id
+SELECT e.* FROM expeditions e
+WHERE NOT EXISTS (
+    SELECT 1 FROM (SELECT DISTINCT specialization FROM researchers) s
+    WHERE NOT EXISTS (
+        SELECT 1 FROM expedition_researchers er
+        JOIN researchers r ON er.researcher_id = r.id
+        WHERE er.expedition_id = e.id AND r.specialization = s.specialization
+    )
+)
 ```
-- **Результат:** Дослідники, що працюють разом в одній лабораторії
+- **Результат:** Експедиції, де представлені дослідники ВСІХ спеціалізацій
 
 ---
 

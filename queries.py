@@ -250,20 +250,35 @@ def query_laboratories_by_employee_count(min_employees, max_employees):
 # ЗАПИТИ З МНОЖИННИМИ ПОРІВНЯННЯМИ (Queries with Multiple Comparisons)
 # ============================================================================
 
-def query_researchers_same_specialization_as(specialization):
+def query_researchers_contracts_with_all_organizations():
     """
-    Запит 6: Всі дослідники з такою ж спеціалізацією як вказана
-    Query: All researchers with the same specialization as given parameter
+    Запит 6: Дослідники, що мають контракти У ВСІХ організаціях
+    Query: Researchers with contracts from ALL organizations
     
-    SQL: SELECT r1.* FROM researchers r1
-         WHERE r1.specialization IN (
-             SELECT r2.specialization FROM researchers r2 
-             WHERE r2.specialization = %specialization%
+    SQL: SELECT r.* FROM researchers r
+         WHERE NOT EXISTS (
+             SELECT 1 FROM organizations o
+             WHERE NOT EXISTS (
+                 SELECT 1 FROM contracts c
+                 WHERE c.researcher_id = r.id AND c.organization_id = o.id
+             )
          )
     """
-    return db.session.query(Researcher).filter(
-        Researcher.specialization == specialization
-    ).all()
+    # Count total organizations
+    total_organizations = db.session.query(func.count(Organization.id)).scalar()
+    
+    # Get researchers and count how many different organizations they have contracts with
+    researcher_org_counts = db.session.query(
+        Researcher.id,
+        func.count(Organization.id).label('org_count')
+    ).join(Contract, Researcher.id == Contract.researcher_id).join(
+        Organization, Contract.organization_id == Organization.id
+    ).group_by(Researcher.id).all()
+    
+    # Filter researchers who have contracts with ALL organizations
+    researcher_ids = [r[0] for r in researcher_org_counts if r[1] == total_organizations]
+    
+    return db.session.query(Researcher).filter(Researcher.id.in_(researcher_ids)).all()
 
 
 def query_researchers_all_expeditions():
@@ -294,30 +309,39 @@ def query_researchers_all_expeditions():
     return db.session.query(Researcher).filter(Researcher.id.in_(researcher_ids)).all()
 
 
-def query_researchers_same_laboratory(target_researcher_id):
+def query_expeditions_with_all_specializations():
     """
-    Запит 8: Дослідники в одній лабораторії з конкретним дослідником
-    Query: Pairs of researchers working in same laboratory with same specialization
+    Запит 8: Експедиції, де беруть участь дослідники ВСІХ спеціалізацій
+    Query: Expeditions with researchers from ALL specializations
     
-    SQL: SELECT r1.*, r2.* FROM researchers r1, researchers r2
-         WHERE r1.laboratory_id = r2.laboratory_id
-         AND r1.specialization = r2.specialization
-         AND r1.id != r2.id
+    SQL: SELECT e.* FROM expeditions e
+         WHERE NOT EXISTS (
+             SELECT 1 FROM (SELECT DISTINCT specialization FROM researchers) s
+             WHERE NOT EXISTS (
+                 SELECT 1 FROM expedition_researchers er
+                 JOIN researchers r ON er.researcher_id = r.id
+                 WHERE er.expedition_id = e.id AND r.specialization = s.specialization
+             )
+         )
     """
-    target = db.session.query(Researcher).filter(
-        Researcher.id == target_researcher_id
-    ).first()
+    # Count total unique specializations
+    total_specializations = db.session.query(
+        func.count(func.distinct(Researcher.specialization))
+    ).scalar()
     
-    if not target:
+    if total_specializations == 0:
         return []
     
-    return db.session.query(Researcher).filter(
-        and_(
-            Researcher.laboratory_id == target.laboratory_id,
-            Researcher.specialization == target.specialization,
-            Researcher.id != target.id
-        )
-    ).all()
+    # Get expeditions and count unique specializations in them
+    expedition_spec_counts = db.session.query(
+        Expedition.id,
+        func.count(func.distinct(Researcher.specialization)).label('spec_count')
+    ).join(Expedition.researchers).group_by(Expedition.id).all()
+    
+    # Filter expeditions with all specializations
+    expedition_ids = [e[0] for e in expedition_spec_counts if e[1] == total_specializations]
+    
+    return db.session.query(Expedition).filter(Expedition.id.in_(expedition_ids)).all()
 
 
 # ============================================================================
